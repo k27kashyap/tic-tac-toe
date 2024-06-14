@@ -17,6 +17,7 @@ export default function GameBoard({ onActivePlayer, activePlayerSymbol }) {
             updatedGameBoard[rowIndex][colIndex] = activePlayerSymbol;
             return updatedGameBoard;
         });
+
         onActivePlayer();
     }
     return (
