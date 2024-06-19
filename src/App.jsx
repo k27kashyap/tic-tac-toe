@@ -3,6 +3,13 @@ import GameBoard from './Components/GameBoard';
 import { act, useState } from 'react';
 import Log from './Components/Log';
 import { WINNING_COMBOS } from './Components/winning_combinations';
+import GameOver from './Components/GameOver';
+
+const initialGameBoard = [
+    [null, null, null],
+    [null, null, null],
+    [null, null, null],
+];
 
 function derivedActivePlayer(gameTurns) {
     let currentPlayer = 'X';
@@ -15,6 +22,35 @@ function App() {
     const [gameTurns, setGameTurns] = useState([]);
     const activePlayer = derivedActivePlayer(gameTurns);
 
+    let gameBoard = [...initialGameBoard.map((array) => [...array])];
+
+    for (const turn of gameTurns) {
+        const { square, player } = turn;
+        const { row, col } = square;
+
+        gameBoard[row][col] = player;
+    }
+
+    let winner;
+
+    for (const combination of WINNING_COMBOS) {
+        const firstSquare =
+            gameBoard[combination[0].row][combination[0].column];
+        const secondSquare =
+            gameBoard[combination[1].row][combination[1].column];
+        const thirdSquare =
+            gameBoard[combination[2].row][combination[2].column];
+
+        if (
+            firstSquare &&
+            firstSquare === secondSquare &&
+            firstSquare === thirdSquare
+        ) {
+            winner = firstSquare;
+        }
+    }
+
+    const hasDraw = gameTurns.length == 9 && !winner;
     function handleActivePlayer(rowIndex, colIndex) {
         setGameTurns((prevTurns) => {
             const currentPlayer = derivedActivePlayer(prevTurns);
@@ -29,6 +65,10 @@ function App() {
 
             return updatedTurns;
         });
+    }
+
+    function handleRematch() {
+        setGameTurns = [];
     }
 
     return (
@@ -46,9 +86,12 @@ function App() {
                         isActive={activePlayer === 'O'}
                     />
                 </ol>
+                {(winner || hasDraw) && (
+                    <GameOver winner={winner} onRematch={handleRematch} />
+                )}
                 <GameBoard
                     onActivePlayer={handleActivePlayer}
-                    turns={gameTurns}
+                    board={gameBoard}
                 />
                 <Log turns={gameTurns} />
             </div>
