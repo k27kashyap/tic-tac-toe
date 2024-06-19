@@ -25,6 +25,7 @@ export default function GameBoard({ onActivePlayer, turns }) {
                                     onClick={() =>
                                         onActivePlayer(rowIndex, colIndex)
                                     }
+                                    disabled={playerSymbol !== null}
                                 >
                                     {playerSymbol}
                                 </button>

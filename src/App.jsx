@@ -2,20 +2,22 @@ import Player from './Components/Player';
 import GameBoard from './Components/GameBoard';
 import { act, useState } from 'react';
 import Log from './Components/Log';
+import { WINNING_COMBOS } from './Components/winning_combinations';
 
+function derivedActivePlayer(gameTurns) {
+    let currentPlayer = 'X';
+    if (gameTurns.length > 0 && gameTurns[0].player === 'X') {
+        currentPlayer = 'O';
+    }
+    return currentPlayer;
+}
 function App() {
     const [gameTurns, setGameTurns] = useState([]);
-    const [activePlayer, setActivePlayer] = useState('X');
+    const activePlayer = derivedActivePlayer(gameTurns);
 
     function handleActivePlayer(rowIndex, colIndex) {
-        setActivePlayer((currentPlayer) => (currentPlayer === 'X' ? 'O' : 'X'));
-
         setGameTurns((prevTurns) => {
-            let currentPlayer = 'X';
-
-            if (prevTurns.length > 0 && prevTurns[0].player === 'X') {
-                currentPlayer = 'O';
-            }
+            const currentPlayer = derivedActivePlayer(prevTurns);
 
             const updatedTurns = [
                 {
@@ -28,6 +30,7 @@ function App() {
             return updatedTurns;
         });
     }
+
     return (
         <main>
             <div id="game-container">
@@ -47,8 +50,8 @@ function App() {
                     onActivePlayer={handleActivePlayer}
                     turns={gameTurns}
                 />
+                <Log turns={gameTurns} />
             </div>
-            <Log />
         </main>
     );
 }
